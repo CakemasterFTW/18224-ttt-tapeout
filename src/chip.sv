@@ -6,42 +6,28 @@ module my_chip (
     input logic clock,
     input logic reset // Important: Reset is ACTIVE-HIGH
 );
-    
-    // Basic counter design as an example
 
-
-    wire [6:0] led_out;
-    assign io_out[6:0] = led_out;
-
-    // external clock is 1000Hz, so need 10 bit counter
-    reg [9:0] second_counter;
-    reg [3:0] digit;
-
-    always @(posedge clock) begin
-        // if reset, set counter to 0
-        if (reset) begin
-            second_counter <= 0;
-            digit <= 0;
-        end else begin
-            // if up to 16e6
-            if (second_counter == 1000) begin
-                // reset
-                second_counter <= 0;
-
-                // increment digit
-                digit <= digit + 1'b1;
-
-                // only count from 0 to 9
-                if (digit == 9)
-                    digit <= 0;
-
-            end else
-                // increment counter
-                second_counter <= second_counter + 1'b1;
-        end
-    end
-
-    // instantiate segment display
-    seg7 seg7(.counter(digit), .segments(led_out));
+    ttt_game_control ttt(.b0(io_in[0]),
+                         .b1(io_in[1]),
+                         .b2(io_in[2]),
+                         .b3(io_in[3]),
+                         .b4(io_in[4]),
+                         .b5(io_in[5]),
+                         .b6(io_in[6]),
+                         .b7(io_in[7]),
+                         .b8(io_in[8]),
+                         .player_sel(io_in[9]),
+                         .start(io_in[10]),
+                         .led0(io_out[0]),
+                         .led1(io_out[1]),
+                         .led2(io_out[2]),
+                         .led3(io_out[3]),
+                         .led4(io_out[4]),
+                         .led5(io_out[5]),
+                         .led6(io_out[6]),
+                         .led7(io_out[7]),
+                         .led8(io_out[8]),
+                         .clk(clock),
+                         .reset(reset));
 
 endmodule
