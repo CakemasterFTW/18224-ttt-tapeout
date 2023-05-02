@@ -314,7 +314,8 @@ module ttt_game_control (
 endmodule: ttt_game_control
 
 module win_detection (
-    input  logic [8:0] p1_state, p2_state, clk, reset,
+    input  logic [8:0] p1_state, p2_state,
+    input  logic       clk, reset,
     output logic       finished
 );
 
