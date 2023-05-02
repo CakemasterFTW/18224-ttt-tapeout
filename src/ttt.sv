@@ -1,3 +1,4 @@
+// TODO: DEBOUNCE BUTTONSSSSSSSSSSSSSSSSSSSSSSS
 module ttt_game_control (
     input  logic b0, b1, b2, b3, b4, b5, b6, b7, b8, player_sel, start,
     input  logic clk, reset,
@@ -9,7 +10,7 @@ module ttt_game_control (
 
   assign button_pressed = b0 | b1 | b2 | b3 | b4 | b5 | b6 | b7 | b8;
 
-  always_ff @(posedge clk, posedge reset) begin
+  always_ff @(posedge clk) begin
     if (reset || new_game) begin
       game_state <= 9'd0;
       p1_state <= 9'd0;
@@ -198,7 +199,7 @@ module ttt_fsm (
     endcase
   end
 
-  always_ff @(posedge clk, posedge reset)
+  always_ff @(posedge clk)
     if (reset) state <= START;
     else state <= nextState;
 
