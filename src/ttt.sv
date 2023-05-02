@@ -6,7 +6,7 @@ module ttt_game_control (
 );
 
   logic [8:0] game_state, p1_state, p2_state;
-  logic curr_player, button_pressed, new_game;
+  logic curr_player, button_pressed, new_game, finished;
 
   assign button_pressed = b0 | b1 | b2 | b3 | b4 | b5 | b6 | b7 | b8;
 
@@ -114,8 +114,8 @@ module ttt_game_control (
     end
   end
 
-
-  ttt_fsm fsm(.finished(0), .*);
+  win_detection wd(.*);
+  ttt_fsm fsm(.*);
 
 endmodule: ttt_game_control
 
