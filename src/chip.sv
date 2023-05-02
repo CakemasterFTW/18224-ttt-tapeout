@@ -30,4 +30,6 @@ module my_chip (
                          .clk(clock),
                          .reset(reset));
 
+    assign io_out[11:9] = 3'd0;
+
 endmodule

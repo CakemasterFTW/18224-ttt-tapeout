@@ -358,6 +358,32 @@ module ttt_game_control (
 			p1_state_en = 1;
 			p2_state_en = 1;
 		end
+		else if (player_sel == 0) begin
+			led0_en = 1'b0;
+			led1_en = 1'b0;
+			led2_en = 1'b0;
+			led3_en = 1'b0;
+			led4_en = 1'b0;
+			led5_en = 1'b0;
+			led6_en = 1'b0;
+			led7_en = 1'b0;
+			led8_en = 1'b0;
+			game_state_en = 1'b0;
+			p1_state_en = 1'b0;
+			p2_state_en = 1'b0;
+			led0_reg = 1'b0;
+			led1_reg = 1'b0;
+			led2_reg = 1'b0;
+			led3_reg = 1'b0;
+			led4_reg = 1'b0;
+			led5_reg = 1'b0;
+			led6_reg = 1'b0;
+			led7_reg = 1'b0;
+			led8_reg = 1'b0;
+			game_state_reg = 9'd0;
+			p1_state_reg = 9'd0;
+			p2_state_reg = 9'd0;
+		end
 		else if (curr_player == 0) begin
 			if ((b0_reg1 == 1) && (game_state[0] == 0)) begin
 				led0_reg = 1;
@@ -558,8 +584,8 @@ module ttt_game_control (
 		end
 	end
 	win_detection wd(
-		.p1_state(p1_state_reg),
-		.p2_state(p2_state_reg),
+		.p1_state(p1_state),
+		.p2_state(p2_state),
 		.clk(clk),
 		.reset(reset),
 		.finished(finished)
