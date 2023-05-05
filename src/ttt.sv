@@ -11,6 +11,20 @@ module Register
 
 endmodule: Register
 
+module random_number (
+    input  logic       clear, clock,
+    output logic [3:0] Q
+);
+
+  logic val;
+  assign val = Q[3] ^ Q[0];
+
+  always_ff @(posedge clock)
+      if (clear) Q <= 4'hf;
+      else Q <= {Q[2:0], val};
+
+endmodule: random_number
+
 module ttt_game_control (
     input  logic b0, b1, b2, b3, b4, b5, b6, b7, b8, player_sel, start,
     input  logic clk, reset,
@@ -18,37 +32,38 @@ module ttt_game_control (
 );
 
   logic [8:0] game_state, p1_state, p2_state, game_state_reg, p1_state_reg, p2_state_reg;
-  logic curr_player, button_pressed, new_game, finished, led0_en, led1_en, led2_en, led3_en, led4_en, led5_en,
+  logic [3:0] index;
+  logic curr_player, button_pressed, new_game, finished, next, led0_en, led1_en, led2_en, led3_en, led4_en, led5_en,
         led6_en, led7_en, led8_en, game_state_en, p1_state_en, p2_state_en, led0_reg, led1_reg, led2_reg, led3_reg,
         led4_reg, led5_reg, led6_reg, led7_reg, led8_reg, b0_reg0, b0_reg1, b1_reg0, b1_reg1, b2_reg0, b2_reg1,
         b3_reg0, b3_reg1, b4_reg0, b4_reg1, b5_reg0, b5_reg1, b6_reg0, b6_reg1, b7_reg0, b7_reg1, b8_reg0, b8_reg1;
 
-  Register #(1) db0_0(.D(b0), .Q(b0_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db0_1(.D(b0_reg0), .Q(b0_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db0_0(.D(b0), .Q(b0_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db0_1(.D(b0_reg0), .Q(b0_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) d1_0(.D(b1), .Q(b1_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db1_1(.D(b1_reg0), .Q(b1_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) d1_0(.D(b1), .Q(b1_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db1_1(.D(b1_reg0), .Q(b1_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db2_0(.D(b2), .Q(b2_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db2_1(.D(b2_reg0), .Q(b2_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db2_0(.D(b2), .Q(b2_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db2_1(.D(b2_reg0), .Q(b2_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db3_0(.D(b3), .Q(b3_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db3_1(.D(b3_reg0), .Q(b3_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db3_0(.D(b3), .Q(b3_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db3_1(.D(b3_reg0), .Q(b3_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db4_0(.D(b4), .Q(b4_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db4_1(.D(b4_reg0), .Q(b4_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db4_0(.D(b4), .Q(b4_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db4_1(.D(b4_reg0), .Q(b4_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db5_0(.D(b5), .Q(b5_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db5_1(.D(b5_reg0), .Q(b5_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db5_0(.D(b5), .Q(b5_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db5_1(.D(b5_reg0), .Q(b5_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db6_0(.D(b6), .Q(b6_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db6_1(.D(b6_reg0), .Q(b6_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db6_0(.D(b6), .Q(b6_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db6_1(.D(b6_reg0), .Q(b6_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db7_0(.D(b7), .Q(b7_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db7_1(.D(b7_reg0), .Q(b7_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db7_0(.D(b7), .Q(b7_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db7_1(.D(b7_reg0), .Q(b7_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
-  Register #(1) db8_0(.D(b8), .Q(b8_reg0), .en(1'b1), .clear(1'b0), .clock(clk));
-  Register #(1) db8_1(.D(b8_reg0), .Q(b8_reg1), .en(1'b1), .clear(1'b0), .clock(clk));
+  Register #(1) db8_0(.D(b8), .Q(b8_reg0), .en(1'b1), .clear(reset), .clock(clk));
+  Register #(1) db8_1(.D(b8_reg0), .Q(b8_reg1), .en(1'b1), .clear(reset), .clock(clk));
 
   Register #(1) led0_r(.D(led0_reg), .Q(led0), .en(led0_en), .clear(reset), .clock(clk));
   Register #(1) led1_r(.D(led1_reg), .Q(led1), .en(led1_en), .clear(reset), .clock(clk));
@@ -64,7 +79,9 @@ module ttt_game_control (
   Register #(9) p1_state_r(.D(p1_state_reg), .Q(p1_state), .en(p1_state_en), .clear(reset), .clock(clk));
   Register #(9) p2_state_r(.D(p2_state_reg), .Q(p2_state), .en(p2_state_en), .clear(reset), .clock(clk));
 
-  assign button_pressed = b0_reg1 | b1_reg1 | b2_reg1 | b3_reg1 | b4_reg1 | b5_reg1 | b6_reg1 | b7_reg1 | b8_reg1;
+  random_number rn(.Q(index), .clear(reset), .clock(clk));
+
+  assign button_pressed = b0_reg1 | b1_reg1 | b2_reg1 | b3_reg1 | b4_reg1 | b5_reg1 | b6_reg1 | b7_reg1 | b8_reg1 | next;
 
   always_comb begin
     led0_en = 1'b0;
@@ -91,6 +108,7 @@ module ttt_game_control (
     game_state_reg = 9'd0;
     p1_state_reg = 9'd0;
     p2_state_reg = 9'd0;
+    next = 0;
     if (reset || new_game) begin
       game_state_reg = 9'd0;
       p1_state_reg = 9'd0;
@@ -100,37 +118,9 @@ module ttt_game_control (
       p2_state_en = 1'b1;
     end
     else if (player_sel == 0) begin
-      led0_en = 1'b0;
-      led1_en = 1'b0;
-      led2_en = 1'b0;
-      led3_en = 1'b0;
-      led4_en = 1'b0;
-      led5_en = 1'b0;
-      led6_en = 1'b0;
-      led7_en = 1'b0;
-      led8_en = 1'b0;
-      game_state_en = 1'b0;
-      p1_state_en = 1'b0;
-      p2_state_en = 1'b0;
-      led0_reg = 1'b0;
-      led1_reg = 1'b0;
-      led2_reg = 1'b0;
-      led3_reg = 1'b0;
-      led4_reg = 1'b0;
-      led5_reg = 1'b0;
-      led6_reg = 1'b0;
-      led7_reg = 1'b0;
-      led8_reg = 1'b0;
-      game_state_reg = 9'd0;
-      p1_state_reg = 9'd0;
-      p2_state_reg = 9'd0;
-    end
-    else begin
       if (curr_player == 0) begin // player 1
         if (b0_reg1 == 1 && game_state[0] == 0) begin
           led0_reg = 1'b1;
-          //game_state_reg = {game_state[8:1], 1'b1};
-          //p1_state_reg = {p1_state[8:1], 1'b1};
           game_state_reg = game_state | 9'h1;
           p1_state_reg = p1_state | 9'h1;
           led0_en = 1'b1;
@@ -139,8 +129,6 @@ module ttt_game_control (
         end
         else if (b1_reg1 == 1 && game_state[1] == 0) begin
           led1_reg = 1'b1;
-          //game_state_reg = {game_state[8:2], 1'b1, game_state[0]};
-          //p1_state_reg = {p1_state[8:2], 1'b1, p1_state[0]};
           game_state_reg = game_state | 9'h2;
           p1_state_reg = p1_state | 9'h2;
           led1_en = 1'b1;
@@ -149,8 +137,6 @@ module ttt_game_control (
         end
         else if (b2_reg1 == 1 && game_state[2] == 0) begin
           led2_reg = 1'b1;
-          //game_state_reg = {game_state[8:3], 1'b1, game_state[1:0]};
-          //p1_state_reg = {p1_state[8:3], 1'b1, p1_state[1:0]};
           game_state_reg = game_state | 9'h4;
           p1_state_reg = p1_state | 9'h4;
           led2_en = 1'b1;
@@ -159,8 +145,6 @@ module ttt_game_control (
         end
         else if (b3_reg1 == 1 && game_state[3] == 0) begin
           led3_reg = 1'b1;
-          //game_state_reg = {game_state[8:4], 1'b1, game_state[2:0]};
-          //p1_state_reg = {p1_state[8:4], 1'b1, p1_state[2:0]};
           game_state_reg = game_state | 9'h8;
           p1_state_reg = p1_state | 9'h8;
           led3_en = 1'b1;
@@ -169,8 +153,6 @@ module ttt_game_control (
         end
         else if (b4_reg1 == 1 && game_state[4] == 0) begin
           led4_reg = 1'b1;
-          //game_state_reg = {game_state[8:5], 1'b1, game_state[3:0]};
-          //p1_state_reg = {p1_state[8:5], 1'b1, p1_state[3:0]};
           game_state_reg = game_state | 9'h10;
           p1_state_reg = p1_state | 9'h10;
           led4_en = 1'b1;
@@ -179,8 +161,6 @@ module ttt_game_control (
         end
         else if (b5_reg1 == 1 && game_state[5] == 0) begin
           led5_reg = 1'b1;
-          //game_state_reg = {game_state[8:6], 1'b1, game_state[4:0]};
-          //p1_state_reg = {p1_state[8:6], 1'b1, p1_state[4:0]};
           game_state_reg = game_state | 9'h20;
           p1_state_reg = p1_state | 9'h20;
           led5_en = 1'b1;
@@ -189,8 +169,6 @@ module ttt_game_control (
         end
         else if (b6_reg1 == 1 && game_state[6] == 0) begin
           led6_reg = 1'b1;
-          //game_state_reg = {game_state[8:7], 1'b1, game_state[5:0]};
-          //p1_state_reg = {p1_state[8:7], 1'b1, p1_state[5:0]};
           game_state_reg = game_state | 9'h40;
           p1_state_reg = p1_state | 9'h40;
           led6_en = 1'b1;
@@ -199,8 +177,6 @@ module ttt_game_control (
         end
         else if (b7_reg1 == 1 && game_state[7] == 0) begin
           led7_reg = 1'b1;
-          //game_state_reg = {game_state[8], 1'b1, game_state[6:0]};
-          //p1_state_reg = {p1_state[8], 1'b1, p1_state[6:0]};
           game_state_reg = game_state | 9'h80;
           p1_state_reg = p1_state | 9'h80;
           led7_en = 1'b1;
@@ -209,8 +185,217 @@ module ttt_game_control (
         end
         else if (b8_reg1 == 1 && game_state[8] == 0) begin
           led8_reg = 1'b1;
-          //game_state_reg = {1'b1, game_state[7:0]};
-          //p1_state_reg = {1'b1, p1_state[7:0]};
+          game_state_reg = game_state | 9'h100;
+          p1_state_reg = p1_state | 9'h100;
+          led8_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else begin
+          led0_en = 1'b0;
+          led1_en = 1'b0;
+          led2_en = 1'b0;
+          led3_en = 1'b0;
+          led4_en = 1'b0;
+          led5_en = 1'b0;
+          led6_en = 1'b0;
+          led7_en = 1'b0;
+          led8_en = 1'b0;
+          game_state_en = 1'b0;
+          p1_state_en = 1'b0;
+          p2_state_en = 1'b0;
+          led0_reg = 1'b0;
+          led1_reg = 1'b0;
+          led2_reg = 1'b0;
+          led3_reg = 1'b0;
+          led4_reg = 1'b0;
+          led5_reg = 1'b0;
+          led6_reg = 1'b0;
+          led7_reg = 1'b0;
+          led8_reg = 1'b0;
+          game_state_reg = 9'd0;
+          p1_state_reg = 9'd0;
+          p2_state_reg = 9'd0;
+        end
+      end
+      else begin
+        if (game_state[0] == 0) begin
+          next = 1'b1;
+          led0_reg = 1'b1;
+          game_state_reg = game_state | 9'h1;
+          p2_state_reg = p2_state | 9'h1;
+          led0_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[1] == 0) begin
+          next = 1'b1;
+          led1_reg = 1'b1;
+          game_state_reg = game_state | 9'h2;
+          p2_state_reg = p2_state | 9'h2;
+          led1_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[2] == 0) begin
+          next = 1'b1;
+          led2_reg = 1'b1;
+          game_state_reg = game_state | 9'h4;
+          p2_state_reg = p2_state | 9'h4;
+          led2_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[3] == 0) begin
+          next = 1'b1;
+          led3_reg = 1'b1;
+          game_state_reg = game_state | 9'h8;
+          p2_state_reg = p2_state | 9'h8;
+          led3_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[4] == 0) begin
+          next = 1'b1;
+          led4_reg = 1'b1;
+          game_state_reg = game_state | 9'h10;
+          p2_state_reg = p2_state | 9'h10;
+          led4_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[5] == 0) begin
+          next = 1'b1;
+          led5_reg = 1'b1;
+          game_state_reg = game_state | 9'h20;
+          p2_state_reg = p2_state | 9'h20;
+          led5_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[6] == 0) begin
+          next = 1'b1;
+          led6_reg = 1'b1;
+          game_state_reg = game_state | 9'h40;
+          p2_state_reg = p2_state | 9'h40;
+          led6_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[7] == 0) begin
+          next = 1'b1;
+          led7_reg = 1'b1;
+          game_state_reg = game_state | 9'h80;
+          p2_state_reg = p2_state | 9'h80;
+          led7_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else if (game_state[8] == 0) begin
+          next = 1'b1;
+          led8_reg = 1'b1;
+          game_state_reg = game_state | 9'h100;
+          p2_state_reg = p2_state | 9'h100;
+          led8_en = 1'b1;
+          game_state_en = 1'b1;
+          p2_state_en = 1'b1;
+        end
+        else begin
+          led0_en = 1'b0;
+          led1_en = 1'b0;
+          led2_en = 1'b0;
+          led3_en = 1'b0;
+          led4_en = 1'b0;
+          led5_en = 1'b0;
+          led6_en = 1'b0;
+          led7_en = 1'b0;
+          led8_en = 1'b0;
+          game_state_en = 1'b0;
+          p1_state_en = 1'b0;
+          p2_state_en = 1'b0;
+          led0_reg = 1'b0;
+          led1_reg = 1'b0;
+          led2_reg = 1'b0;
+          led3_reg = 1'b0;
+          led4_reg = 1'b0;
+          led5_reg = 1'b0;
+          led6_reg = 1'b0;
+          led7_reg = 1'b0;
+          led8_reg = 1'b0;
+          game_state_reg = 9'd0;
+          p1_state_reg = 9'd0;
+          p2_state_reg = 9'd0;
+        end
+      end
+    end
+    else begin
+      if (curr_player == 0) begin // player 1
+        if (b0_reg1 == 1 && game_state[0] == 0) begin
+          led0_reg = 1'b1;
+          game_state_reg = game_state | 9'h1;
+          p1_state_reg = p1_state | 9'h1;
+          led0_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b1_reg1 == 1 && game_state[1] == 0) begin
+          led1_reg = 1'b1;
+          game_state_reg = game_state | 9'h2;
+          p1_state_reg = p1_state | 9'h2;
+          led1_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b2_reg1 == 1 && game_state[2] == 0) begin
+          led2_reg = 1'b1;
+          game_state_reg = game_state | 9'h4;
+          p1_state_reg = p1_state | 9'h4;
+          led2_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b3_reg1 == 1 && game_state[3] == 0) begin
+          led3_reg = 1'b1;
+          game_state_reg = game_state | 9'h8;
+          p1_state_reg = p1_state | 9'h8;
+          led3_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b4_reg1 == 1 && game_state[4] == 0) begin
+          led4_reg = 1'b1;
+          game_state_reg = game_state | 9'h10;
+          p1_state_reg = p1_state | 9'h10;
+          led4_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b5_reg1 == 1 && game_state[5] == 0) begin
+          led5_reg = 1'b1;
+          game_state_reg = game_state | 9'h20;
+          p1_state_reg = p1_state | 9'h20;
+          led5_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b6_reg1 == 1 && game_state[6] == 0) begin
+          led6_reg = 1'b1;
+          game_state_reg = game_state | 9'h40;
+          p1_state_reg = p1_state | 9'h40;
+          led6_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b7_reg1 == 1 && game_state[7] == 0) begin
+          led7_reg = 1'b1;
+          game_state_reg = game_state | 9'h80;
+          p1_state_reg = p1_state | 9'h80;
+          led7_en = 1'b1;
+          game_state_en = 1'b1;
+          p1_state_en = 1'b1;
+        end
+        else if (b8_reg1 == 1 && game_state[8] == 0) begin
+          led8_reg = 1'b1;
           game_state_reg = game_state | 9'h100;
           p1_state_reg = p1_state | 9'h100;
           led8_en = 1'b1;
@@ -247,8 +432,6 @@ module ttt_game_control (
       else begin
         if (b0_reg1 == 1 && game_state[0] == 0) begin
           led0_reg = 1'b1;
-          //game_state_reg = {game_state[8:1], 1'b1};
-          //p2_state_reg = {p2_state[8:1], 1'b1};
           game_state_reg = game_state | 9'h1;
           p2_state_reg = p2_state | 9'h1;
           led0_en = 1'b1;
@@ -257,8 +440,6 @@ module ttt_game_control (
         end
         else if (b1_reg1 == 1 && game_state[1] == 0) begin
           led1_reg = 1'b1;
-          //game_state_reg = {game_state[8:2], 1'b1, game_state[0]};
-          //p2_state_reg = {p2_state[8:2], 1'b1, p2_state[0]};
           game_state_reg = game_state | 9'h2;
           p2_state_reg = p2_state | 9'h2;
           led1_en = 1'b1;
@@ -267,8 +448,6 @@ module ttt_game_control (
         end
         else if (b2_reg1 == 1 && game_state[2] == 0) begin
           led2_reg = 1'b1;
-          //game_state_reg = {game_state[8:3], 1'b1, game_state[1:0]};
-          //p2_state_reg = {p2_state[8:3], 1'b1, p2_state[1:0]};
           game_state_reg = game_state | 9'h4;
           p2_state_reg = p2_state | 9'h4;
           led2_en = 1'b1;
@@ -277,8 +456,6 @@ module ttt_game_control (
         end
         else if (b3_reg1 == 1 && game_state[3] == 0) begin
           led3_reg = 1'b1;
-          //game_state_reg = {game_state[8:4], 1'b1, game_state[2:0]};
-          //p2_state_reg = {p2_state[8:4], 1'b1, p2_state[2:0]};
           game_state_reg = game_state | 9'h8;
           p2_state_reg = p2_state | 9'h8;
           led3_en = 1'b1;
@@ -287,8 +464,6 @@ module ttt_game_control (
         end
         else if (b4_reg1 == 1 && game_state[4] == 0) begin
           led4_reg = 1'b1;
-          //game_state_reg = {game_state[8:5], 1'b1, game_state[3:0]};
-          //p2_state_reg = {p2_state[8:5], 1'b1, p2_state[3:0]};
           game_state_reg = game_state | 9'h10;
           p2_state_reg = p2_state | 9'h10;
           led4_en = 1'b1;
@@ -297,8 +472,6 @@ module ttt_game_control (
         end
         else if (b5_reg1 == 1 && game_state[5] == 0) begin
           led5_reg = 1'b1;
-          //game_state_reg = {game_state[8:6], 1'b1, game_state[4:0]};
-          //p2_state_reg = {p2_state[8:6], 1'b1, p2_state[4:0]};
           game_state_reg = game_state | 9'h20;
           p2_state_reg = p2_state | 9'h20;
           led5_en = 1'b1;
@@ -307,8 +480,6 @@ module ttt_game_control (
         end
         else if (b6_reg1 == 1 && game_state[6] == 0) begin
           led6_reg = 1'b1;
-          //game_state_reg = {game_state[8:7], 1'b1, game_state[5:0]};
-          //p2_state_reg = {p2_state[8:7], 1'b1, p2_state[5:0]};
           game_state_reg = game_state | 9'h40;
           p2_state_reg = p2_state | 9'h40;
           led6_en = 1'b1;
@@ -317,8 +488,6 @@ module ttt_game_control (
         end
         else if (b7_reg1 == 1 && game_state[7] == 0) begin
           led7_reg = 1'b1;
-          //game_state_reg = {game_state[8], 1'b1, game_state[6:0]};
-          //p2_state_reg = {p2_state[8], 1'b1, p2_state[6:0]};
           game_state_reg = game_state | 9'h80;
           p2_state_reg = p2_state | 9'h80;
           led7_en = 1'b1;
@@ -327,8 +496,6 @@ module ttt_game_control (
         end
         else if (b8_reg1 == 1 && game_state[8] == 0) begin
           led8_reg = 1'b1;
-          //game_state_reg = {1'b1, game_state[7:0]};
-          //p2_state_reg = {1'b1, p2_state[7:0]};
           game_state_reg = game_state | 9'h100;
           p2_state_reg = p2_state | 9'h100;
           led8_en = 1'b1;
